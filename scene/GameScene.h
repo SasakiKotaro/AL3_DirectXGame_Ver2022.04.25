@@ -49,7 +49,7 @@ private: // メンバ変数
 	DebugText* debugText_ = nullptr;
 	uint32_t textureHandle_ = 0;	//テクスチャハンドル
 	Model* model_ = nullptr;		//3Dモデル
-	WorldTransform worldTransform_;
+	WorldTransform worldTransforms_[100];
 	ViewProjection viewProjection_;
 	DebugCamera* debugCamera_ = nullptr;
 
@@ -70,6 +70,8 @@ private: // メンバ変数
 	Vector4 xColor_ = { 1,0,0,0.5 };
 	Vector4 yColor_ = { 0,1,0,0.5 };
 	Vector4 zColor_ = { 0,0,1,0.5 };
+
+	float viewAngle = 0.0f;
 
 	/// <summary>
 	/// ゲームシーン用
