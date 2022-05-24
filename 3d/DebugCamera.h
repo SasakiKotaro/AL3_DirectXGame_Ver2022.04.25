@@ -7,7 +7,7 @@
 /// </summary>
 class DebugCamera {
 
-  public:
+public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -26,7 +26,9 @@ class DebugCamera {
 	/// <returns>ビュープロジェクション</returns>
 	const ViewProjection& GetViewProjection() { return viewProjection_; }
 
-  private:
+	void Reset();
+
+private:
 	// 入力クラスのポインタ
 	Input* input_;
 	// カメラ注視点までの距離

@@ -4,6 +4,9 @@
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 
+#define PI 3.141592
+#define TORADIAN(r) (r*PI/180)
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene()
@@ -35,6 +38,23 @@ void GameScene::Initialize() {
 
 	//ラインが参照するビュープロジェクションを指定する
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+
+	//------------------------------------------------------------------------
+	//拡縮
+	Matrix4 scaleMat;
+	scaleMat.SetScale(5.0f, 5.0f, 5.0f);
+	//回転
+	Matrix4 rotaMat;
+	rotaMat.SetRotate(TORADIAN(45.0f), TORADIAN(45.0f), TORADIAN(45.0f));
+	//平行移動
+	Matrix4 transMat = MathUtility::Matrix4Identity();
+	transMat.SetTranslate(10.f, 10.f, 10.f);
+
+	//掛け合わせ
+	worldTransform_.matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+	//------------------------------------------------------------------------
+
+	worldTransform_.TransferMatrix();				//更新
 }
 
 void GameScene::Update()

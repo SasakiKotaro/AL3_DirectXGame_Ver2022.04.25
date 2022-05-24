@@ -24,22 +24,4 @@ public:
 	Vector3& operator-=(const Vector3& v);
 	Vector3& operator*=(float s);
 	Vector3& operator/=(float s);
-
-	//Vector3& operator-(float s);//xyz
-	//Vector3& operator-(float f);//xyonly
 };
-
-//Vector3& Vector3::operator-(float s)
-//{
-//	x -= s;
-//	y -= s;
-//	z -= s;
-//}
-//
-//Vector3& Vector3::operator-(float f)
-//{
-//	Vector3 result = { this->x, this->y, this->z };
-//	x -= f;
-//	y -= f;
-//	return result;
-//}
