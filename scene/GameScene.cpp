@@ -7,8 +7,23 @@
 
 #define PI 3.141592
 #define TORADIAN(r) (r*PI/180)
+#define UP DIK_UP
+#define DOWN DIK_DOWN
 
 using namespace std;
+
+float Clamp(float min, float max, float num)
+{
+	if (num <= min)
+	{
+		num = min;
+	}
+	else if (num >= max)
+	{
+		num = max;
+	}
+	return num;
+}
 
 GameScene::GameScene() {}
 
@@ -57,9 +72,12 @@ void GameScene::Initialize() {
 		//------------------------------------------------------------------------
 	}
 
-	viewProjection_.eye = { 0,0,-50 };
-	viewProjection_.target = { 10,0,0 };
-	viewProjection_.up = { cosf(PI / 4.0f),sinf(PI / 4.0f),0.0f };
+	//カメラ垂直方向視野角を設定
+	viewProjection_.fovAngleY = TORADIAN(10.0f);
+	viewProjection_.aspectRatio = 1.0f;
+	viewProjection_.nearZ = 52.0f;
+	viewProjection_.farZ = 63.0f;
+
 	viewProjection_.Initialize();
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
@@ -77,32 +95,20 @@ void GameScene::Update()
 	Vector3 move;
 
 	//視点移動の速さ
-	const float kEyeSpeed = 0.2f;
-	const float kTargetSpeed = 0.2f;
-	const float kUpRotSpeed = 0.05f;
+	const float zoomSpeed = 0.02f;
+	const float clipSpeed = 0.2f;
 
-	//押した方向で移動ベクトルを変更
-	if (input_->PushKey(DIK_W))
+	if (input_->PushKey(UP))
 	{
-		move.z += kEyeSpeed;
+		viewProjection_.fovAngleY += zoomSpeed;
+		viewProjection_.nearZ += clipSpeed;
 	}
-	else if (input_->PushKey(DIK_S))
+	else if (input_->PushKey(DOWN))
 	{
-		move.z -= kEyeSpeed;
+		viewProjection_.fovAngleY -= zoomSpeed;
+		viewProjection_.nearZ -= clipSpeed;
 	}
-	if (input_->PushKey(DIK_LEFT))
-	{
-		move.x -= kTargetSpeed;
-	}
-	else if (input_->PushKey(DIK_RIGHT))
-	{
-		move.x += kTargetSpeed;
-	}
-	if (input_->PushKey(DIK_SPACE))
-	{
-		viewAngle += kUpRotSpeed;
-		viewAngle = fmodf(viewAngle, PI * 2.0f);
-	}
+	viewProjection_.fovAngleY = Clamp(0.01, PI, viewProjection_.fovAngleY);
 
 	//視点移動
 	viewProjection_.eye += move;
@@ -122,6 +128,10 @@ void GameScene::Update()
 	debugText_->SetPos(50, 90);
 	debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y
 		, viewProjection_.up.z);
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("fovAngleY:(Degree):%f", TORADIAN(viewProjection_.fovAngleY));
+	debugText_->SetPos(50, 130);
+	debugText_->Printf("nearZ:%f", viewProjection_.nearZ);
 }
 
 void GameScene::Draw() {
