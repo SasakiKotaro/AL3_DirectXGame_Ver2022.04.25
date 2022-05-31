@@ -1,6 +1,9 @@
 #pragma once
 #include "Model.h"
 #include "WorldTransform.h"
+#include "Input.h"
+#include"DebugText.h"
+#include "ViewProjection.h"
 
 /// <summary>
 /// 自キャラ
@@ -8,8 +11,8 @@
 class Player
 {
 public:
-	Player();
-	~Player();
+	//Player();
+	//~Player();
 
 	/// <summary>
 	/// 初期化
@@ -19,10 +22,13 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
+
+	void Move();
+
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(ViewProjection viewProjection);
 
 private:
 	//ワールド変換データ
@@ -31,12 +37,16 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	//入力処理
+	Input* input_ = nullptr;
+	//デバッグテキスト
+	DebugText* debugText_ = nullptr;
+
+	Vector3 pos;
+	//速度
+	//移動量
+	const float moveSpeed = 0.1f;
+	//視点移動の速さ
+	const float zoomSpeed = 0.02f;
+	const float clipSpeed = 0.2f;
 };
-
-Player::Player()
-{
-}
-
-Player::~Player()
-{
-}
