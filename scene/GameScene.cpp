@@ -9,6 +9,8 @@
 #define TORADIAN(r) (r*PI/180)
 #define UP DIK_UP
 #define DOWN DIK_DOWN
+#define LEFT DIK_LEFT
+#define RIGHT DIK_RIGHT
 
 using namespace std;
 
@@ -50,20 +52,58 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	//3Dモデルの生成
 	model_ = Model::Create();
+	//キャラの大元（親）
+	worldTransforms_[PartId::kRoot].Initialize();
+	//脊椎
+	worldTransforms_[PartId::kSpine].Initialize();
+	worldTransforms_[PartId::kSpine].translation_ = { 0,4.5,0 };
+	worldTransforms_[PartId::kSpine].parent_ = &worldTransforms_[PartId::kRoot];
+	//上半身
+	//胸
+	worldTransforms_[PartId::kChest].Initialize();
+	worldTransforms_[PartId::kChest].translation_ = { 0,3,0 };
+	worldTransforms_[PartId::kChest].parent_ = &worldTransforms_[PartId::kSpine];
+	//頭
+	worldTransforms_[PartId::kHead].Initialize();
+	worldTransforms_[PartId::kHead].translation_ = { 0,3,0 };
+	worldTransforms_[PartId::kHead].parent_ = &worldTransforms_[PartId::kChest];
+	//左腕
+	worldTransforms_[PartId::kArmL].Initialize();
+	worldTransforms_[PartId::kArmL].translation_ = { -3,0,0 };
+	worldTransforms_[PartId::kArmL].parent_ = &worldTransforms_[PartId::kChest];
+	//右腕
+	worldTransforms_[PartId::kArmR].Initialize();
+	worldTransforms_[PartId::kArmR].translation_ = { 3,0,0 };
+	worldTransforms_[PartId::kArmR].parent_ = &worldTransforms_[PartId::kChest];
+	//下半身
+	//腰
+	worldTransforms_[PartId::kHip].Initialize();
+	worldTransforms_[PartId::kHip].translation_ = { 0,0,0 };
+	worldTransforms_[PartId::kHip].parent_ = &worldTransforms_[PartId::kSpine];
+	//左足
+	worldTransforms_[PartId::kLegL].Initialize();
+	worldTransforms_[PartId::kLegL].translation_ = { -3,-3,0 };
+	worldTransforms_[PartId::kLegL].parent_ = &worldTransforms_[PartId::kHip];
+	//右足
+	worldTransforms_[PartId::kLegR].Initialize();
+	worldTransforms_[PartId::kLegR].translation_ = { 3,-3,0 };
+	worldTransforms_[PartId::kLegR].parent_ = &worldTransforms_[PartId::kHip];
 
 	for (WorldTransform& worldTransform : worldTransforms_)
 	{
-		worldTransform.Initialize();
 		//------------------------------------------------------------------------
 		//拡縮
 		Matrix4 scaleMat;
 		scaleMat.SetScale(1.0f, 1.0f, 1.0f);
 		//回転
 		Matrix4 rotaMat;
-		rotaMat.SetRotate(TORADIAN(rotRand(engine)), TORADIAN(rotRand(engine)), TORADIAN(rotRand(engine)));
+		rotaMat.SetRotate(TORADIAN(0), TORADIAN(0), TORADIAN(0));
 		//平行移動
 		Matrix4 transMat = MathUtility::Matrix4Identity();
-		transMat.SetTranslate(posRand(engine), posRand(engine), posRand(engine));
+		transMat.SetTranslate(
+			worldTransform.translation_.x,
+			worldTransform.translation_.y,
+			worldTransform.translation_.z);
 
 		//掛け合わせ
 		worldTransform.matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
@@ -71,12 +111,6 @@ void GameScene::Initialize() {
 		worldTransform.TransferMatrix();				//更新
 		//------------------------------------------------------------------------
 	}
-
-	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = TORADIAN(10.0f);
-	viewProjection_.aspectRatio = 1.0f;
-	viewProjection_.nearZ = 52.0f;
-	viewProjection_.farZ = 63.0f;
 
 	viewProjection_.Initialize();
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
@@ -91,47 +125,102 @@ void GameScene::Initialize() {
 
 void GameScene::Update()
 {
+	for (int i = 0; i < PartId::kNumRartId; i++)
+	{
+		worldTransforms_[i].Initialize();
+	}
 	//視点の移動ベクトル
 	Vector3 move;
-
+	Vector3 chestAngle;
+	Vector3 hipAngle;
+	//移動量
+	const float moveSpeed = 0.1f;
 	//視点移動の速さ
 	const float zoomSpeed = 0.02f;
 	const float clipSpeed = 0.2f;
 
-	if (input_->PushKey(UP))
+	if (input_->PushKey(RIGHT))
 	{
-		viewProjection_.fovAngleY += zoomSpeed;
-		viewProjection_.nearZ += clipSpeed;
+		move.x += moveSpeed;
 	}
-	else if (input_->PushKey(DOWN))
+	else if (input_->PushKey(LEFT))
 	{
-		viewProjection_.fovAngleY -= zoomSpeed;
-		viewProjection_.nearZ -= clipSpeed;
+		move.x -= moveSpeed;
 	}
-	viewProjection_.fovAngleY = Clamp(0.01, PI, viewProjection_.fovAngleY);
+	if (input_->PushKey(DIK_U))
+	{
+		chestAngle.y -= moveSpeed;
+	}
+	else if (input_->PushKey(DIK_I))
+	{
+		chestAngle.y += moveSpeed;
+	}
+	if (input_->PushKey(DIK_J))
+	{
+		hipAngle.y -= moveSpeed;
+	}
+	else if (input_->PushKey(DIK_K))
+	{
+		hipAngle.y += moveSpeed;
+	}
 
-	//視点移動
-	viewProjection_.eye += move;
-	viewProjection_.target += move;
-	//上方向ベクトルを計算
-	viewProjection_.up = { cosf(viewAngle),sinf(viewAngle),0.0f };
-	//行列の再計算
-	viewProjection_.UpdateMatrix();
+	//移動計算
+	worldTransforms_[PartId::kRoot].translation_ += move;
+	worldTransforms_[PartId::kChest].rotation_ += chestAngle;
+	worldTransforms_[PartId::kHip].rotation_ += hipAngle;
+	for (int i = 0; i < PartId::kNumRartId; i++)
+	{
+		//拡縮
+		Matrix4 scaleMat;
+		scaleMat.SetScale(1.0f, 1.0f, 1.0f);
+		//回転
+		Matrix4 rotaMat;
+		rotaMat.SetRotate(
+			TORADIAN(0),
+			worldTransforms_[i].rotation_.y,
+			TORADIAN(0));
+		//平行移動
+		Matrix4 transMat = MathUtility::Matrix4Identity();
+		transMat.SetTranslate(
+			worldTransforms_[i].translation_.x,
+			worldTransforms_[i].translation_.y,
+			worldTransforms_[i].translation_.z);
+		//掛け合わせ
+		if (worldTransforms_[i].parent_ == nullptr)
+		{
+			worldTransforms_[i].matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+		}
+		else
+		{
+			worldTransforms_[i].matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+			worldTransforms_[i].matWorld_ *= worldTransforms_[i].parent_->matWorld_;
+		}
+		//転送
+		worldTransforms_[i].TransferMatrix();
+	}
 
 	//debug
 	debugText_->SetPos(50, 50);
-	debugText_->Printf("eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y
-		, viewProjection_.eye.z);
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y
-		, viewProjection_.target.z);
-	debugText_->SetPos(50, 90);
-	debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y
-		, viewProjection_.up.z);
-	debugText_->SetPos(50, 110);
-	debugText_->Printf("fovAngleY:(Degree):%f", TORADIAN(viewProjection_.fovAngleY));
-	debugText_->SetPos(50, 130);
-	debugText_->Printf("nearZ:%f", viewProjection_.nearZ);
+	debugText_->Printf("pos:(%f,%f,%f)",
+		worldTransforms_[PartId::kRoot].translation_.x,
+		worldTransforms_[PartId::kRoot].translation_.y,
+		worldTransforms_[PartId::kRoot].translation_.z);
+
+	//debugText_->SetPos(50, 70);
+	//debugText_->Printf("pso[1]:(%f,%f,%f)",
+	//	worldTransforms_[1].translation_.x,
+	//	worldTransforms_[1].translation_.y,
+	//	worldTransforms_[1].translation_.z);
+	//debugText_->SetPos(50, 70);
+	//debugText_->Printf("target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y
+	//	, viewProjection_.target.z);
+	//debugText_->SetPos(50, 90);
+	//debugText_->Printf("up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y
+	//	, viewProjection_.up.z);
+	//debugText_->SetPos(50, 110);
+	//debugText_->Printf("fovAngleY:(Degree):%f", TORADIAN(viewProjection_.fovAngleY));
+	//debugText_->SetPos(50, 130);
+	//debugText_->Printf("nearZ:%f", viewProjection_.nearZ);
 }
 
 void GameScene::Draw() {
@@ -163,9 +252,12 @@ void GameScene::Draw() {
 
 
 	//3Dモデルの描画
-	for (WorldTransform& worldTransform : worldTransforms_)
+	for (int i = 0; i < PartId::kNumRartId; i++)
 	{
-		model_->Draw(worldTransform, viewProjection_, textureHandle_);
+		if (i >= PartId::kChest)
+		{
+			model_->Draw(worldTransforms_[i], viewProjection_, textureHandle_);
+		}
 	}
 
 	for (int i = -MAXARR; i <= MAXARR; i++)

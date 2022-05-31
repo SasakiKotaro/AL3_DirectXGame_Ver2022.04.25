@@ -42,6 +42,25 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+public:
+	/// <summary>
+	/// パーツのID
+	/// </summary>
+	enum PartId
+	{
+		kRoot,	//大元
+		kSpine,	//脊椎
+		kChest,	//胸
+		kHead,	//頭
+		kArmL,	//左腕
+		kArmR,	//右腕
+		kHip,	//腰
+		kLegL,	//左足
+		kLegR,	//右足
+
+		kNumRartId
+	};
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -49,7 +68,7 @@ private: // メンバ変数
 	DebugText* debugText_ = nullptr;
 	uint32_t textureHandle_ = 0;	//テクスチャハンドル
 	Model* model_ = nullptr;		//3Dモデル
-	WorldTransform worldTransforms_[100];
+	WorldTransform worldTransforms_[PartId::kNumRartId];
 	ViewProjection viewProjection_;
 	DebugCamera* debugCamera_ = nullptr;
 
@@ -72,6 +91,7 @@ private: // メンバ変数
 	Vector4 zColor_ = { 0,0,1,0.5 };
 
 	float viewAngle = 0.0f;
+
 
 	/// <summary>
 	/// ゲームシーン用
