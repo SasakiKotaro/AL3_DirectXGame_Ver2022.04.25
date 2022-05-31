@@ -125,7 +125,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update()
 {
-	for (int i = 0; i < PartId::kNumRartId; i++)
+	for (int i = 0; i < PartId::kNumPartId; i++)
 	{
 		worldTransforms_[i].Initialize();
 	}
@@ -168,7 +168,7 @@ void GameScene::Update()
 	worldTransforms_[PartId::kRoot].translation_ += move;
 	worldTransforms_[PartId::kChest].rotation_ += chestAngle;
 	worldTransforms_[PartId::kHip].rotation_ += hipAngle;
-	for (int i = 0; i < PartId::kNumRartId; i++)
+	for (int i = 0; i < PartId::kNumPartId; i++)
 	{
 		//拡縮
 		Matrix4 scaleMat;
@@ -252,7 +252,7 @@ void GameScene::Draw() {
 
 
 	//3Dモデルの描画
-	for (int i = 0; i < PartId::kNumRartId; i++)
+	for (int i = 0; i < PartId::kNumPartId; i++)
 	{
 		if (i >= PartId::kChest)
 		{

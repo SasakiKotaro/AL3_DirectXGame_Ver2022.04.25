@@ -42,6 +42,21 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	enum PartId
+	{
+		kRoot,
+		kSpine,
+		kChest,
+		kHead,
+		kArmL,
+		kArmR,
+		kHip,
+		kLegL,
+		kLegR,
+
+		kNumPartId
+	};
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -49,7 +64,7 @@ private: // メンバ変数
 	DebugText* debugText_ = nullptr;
 	uint32_t textureHandle_ = 0;	//テクスチャハンドル
 	Model* model_ = nullptr;		//3Dモデル
-	WorldTransform worldTransform_;
+	WorldTransform worldTransforms_[PartId::kNumPartId];
 	ViewProjection viewProjection_;
 	DebugCamera* debugCamera_ = nullptr;
 
