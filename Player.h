@@ -23,6 +23,9 @@ public:
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// ˆÚ“®ˆ—
+	/// </summary>
 	void Move();
 
 	/// <summary>
@@ -46,6 +49,7 @@ private:
 	//‘¬“x
 	//ˆÚ“®—Ê
 	const float moveSpeed = 0.1f;
+	const float rotateSpeed = 0.02f;
 	//‹“_ˆÚ“®‚Ì‘¬‚³
 	const float zoomSpeed = 0.02f;
 	const float clipSpeed = 0.2f;

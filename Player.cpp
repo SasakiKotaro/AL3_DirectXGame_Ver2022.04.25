@@ -74,6 +74,14 @@ void Player::Move()
 		pos.y -= moveSpeed;
 	}
 
+	if (input_->PushKey(DIK_Q))
+	{
+		worldTransform_.rotation_.y += rotateSpeed;
+	}
+	else if (input_->PushKey(DIK_E))
+	{
+		worldTransform_.rotation_.y -= rotateSpeed;
+	}
 }
 
 void Player::Draw(ViewProjection viewProjection)
