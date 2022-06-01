@@ -101,6 +101,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Matrix4.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="worldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\DebugText.h" />

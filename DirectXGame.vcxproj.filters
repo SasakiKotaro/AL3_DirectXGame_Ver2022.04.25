@@ -72,6 +72,18 @@
     <ClCompile Include="3d\DebugCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
+=======
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="worldTransform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">

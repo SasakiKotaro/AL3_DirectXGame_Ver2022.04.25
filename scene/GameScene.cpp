@@ -296,3 +296,37 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
+void newUpdate()
+{
+	for (int i = 0; i < PartId::kNumPartId; i++)
+	{
+		//拡縮
+		Matrix4 scaleMat;
+		scaleMat.SetScale(1.0f, 1.0f, 1.0f);
+		//回転
+		Matrix4 rotaMat;
+		rotaMat.SetRotate(
+			TORADIAN(0),
+			worldTransforms_[i].rotation_.y,
+			TORADIAN(0));
+		//平行移動
+		Matrix4 transMat = MathUtility::Matrix4Identity();
+		transMat.SetTranslate(
+			worldTransforms_[i].translation_.x,
+			worldTransforms_[i].translation_.y,
+			worldTransforms_[i].translation_.z);
+		//掛け合わせ
+		if (worldTransforms_[i].parent_ == nullptr)
+		{
+			worldTransforms_[i].matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+		}
+		else
+		{
+			worldTransforms_[i].matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+			worldTransforms_[i].matWorld_ *= worldTransforms_[i].parent_->matWorld_;
+		}
+		//転送
+		worldTransforms_[i].TransferMatrix();
+	}
+}
