@@ -44,7 +44,7 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 
 	//ファイル名を指定し、テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("mario.jpg");
+	textureHandle_ = TextureManager::Load("arrow.png");
 
 	viewProjection_.Initialize();
 	player_ = new Player();
