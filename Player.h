@@ -4,6 +4,7 @@
 #include "Input.h"
 #include"DebugText.h"
 #include "ViewProjection.h"
+#include "PlayerBullet.h"
 
 /// <summary>
 /// 自キャラ
@@ -33,6 +34,10 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -46,6 +51,8 @@ private:
 	DebugText* debugText_ = nullptr;
 
 	Vector3 pos;
+
+	PlayerBullet* bullet_ = nullptr;
 	//速度
 	//移動量
 	const float moveSpeed = 0.1f;

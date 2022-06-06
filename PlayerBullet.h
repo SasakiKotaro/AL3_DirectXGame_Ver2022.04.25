@@ -28,4 +28,7 @@ private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
+
+	Vector3 move;
+	Vector3 rotate;
 };

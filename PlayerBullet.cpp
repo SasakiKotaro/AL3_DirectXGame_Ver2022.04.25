@@ -15,10 +15,10 @@ void PlayerBullet::Init(Model* model, WorldTransform worldTransform)
 
 void PlayerBullet::Update()
 {
-
+	worldTransform_.Update();
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection)
 {
-
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }

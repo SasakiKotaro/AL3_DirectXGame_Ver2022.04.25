@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "assert.h"
+#define KEY(k) (input_->PushKey(k))
 #define UP DIK_UP
 #define DOWN DIK_DOWN
 #define LEFT DIK_LEFT
@@ -25,7 +26,37 @@ void Player::Update()
 {
 	worldTransform_.Initialize();
 	Move();
+	Attack();
+	if (bullet_) { bullet_->Update(); }
+}
 
+void Player::Move()
+{
+	if (input_->PushKey(RIGHT))
+	{
+		pos.x += moveSpeed;
+	}
+	else if (input_->PushKey(LEFT))
+	{
+		pos.x -= moveSpeed;
+	}
+	if (input_->PushKey(UP))
+	{
+		pos.y += moveSpeed;
+	}
+	else if (input_->PushKey(DOWN))
+	{
+		pos.y -= moveSpeed;
+	}
+
+	if (KEY(DIK_Q))
+	{
+		worldTransform_.rotation_.y += rotateSpeed;
+	}
+	else if (input_->PushKey(DIK_E))
+	{
+		worldTransform_.rotation_.y -= rotateSpeed;
+	}
 	const float kMoveLimitX = 34;
 	const float kMoveLimitY = 18;
 
@@ -55,36 +86,20 @@ void Player::Update()
 	worldTransform_.TransferMatrix();
 }
 
-void Player::Move()
+void Player::Attack()
 {
-	if (input_->PushKey(RIGHT))
+	if (KEY(DIK_SPACE))
 	{
-		pos.x += moveSpeed;
-	}
-	else if (input_->PushKey(LEFT))
-	{
-		pos.x -= moveSpeed;
-	}
-	if (input_->PushKey(UP))
-	{
-		pos.y += moveSpeed;
-	}
-	else if (input_->PushKey(DOWN))
-	{
-		pos.y -= moveSpeed;
-	}
-
-	if (input_->PushKey(DIK_Q))
-	{
-		worldTransform_.rotation_.y += rotateSpeed;
-	}
-	else if (input_->PushKey(DIK_E))
-	{
-		worldTransform_.rotation_.y -= rotateSpeed;
+		//’e‚ð¶¬•‰Šú‰»
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Init(model_, worldTransform_);
+		//’e‚Ì“o˜^
+		bullet_ = newBullet;
 	}
 }
-
 void Player::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	if (bullet_) { bullet_->Draw(viewProjection); }
 }
+
