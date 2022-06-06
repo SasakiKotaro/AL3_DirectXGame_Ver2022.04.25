@@ -1,10 +1,12 @@
 #include "Player.h"
 #include "assert.h"
 #define KEY(k) (input_->PushKey(k))
+#define TRIGGER(k) (input_->TriggerKey(k))
 #define UP DIK_UP
 #define DOWN DIK_DOWN
 #define LEFT DIK_LEFT
 #define RIGHT DIK_RIGHT
+#define SPACE DIK_SPACE
 #define PI 3.141592
 #define TORADIAN(r) (r*PI/180)
 
@@ -27,7 +29,10 @@ void Player::Update()
 	worldTransform_.Initialize();
 	Move();
 	Attack();
-	if (bullet_) { bullet_->Update(); }
+	for (unique_ptr<PlayerBullet>& bullet : bullets_)
+	{
+		bullet->Update();
+	}
 }
 
 void Player::Move()
@@ -88,18 +93,21 @@ void Player::Move()
 
 void Player::Attack()
 {
-	if (KEY(DIK_SPACE))
+	if (TRIGGER(SPACE))
 	{
 		//’e‚ğ¶¬•‰Šú‰»
-		PlayerBullet* newBullet = new PlayerBullet();
+		unique_ptr<PlayerBullet> newBullet = make_unique<PlayerBullet>();
 		newBullet->Init(model_, worldTransform_);
 		//’e‚Ì“o˜^
-		bullet_ = newBullet;
+		bullets_.push_back(move(newBullet));
 	}
 }
 void Player::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	if (bullet_) { bullet_->Draw(viewProjection); }
+	for (unique_ptr<PlayerBullet>& bullet : bullets_)
+	{
+		bullet->Draw(viewProjection);
+	}
 }
 

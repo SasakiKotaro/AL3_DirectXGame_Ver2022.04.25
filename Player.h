@@ -5,6 +5,10 @@
 #include"DebugText.h"
 #include "ViewProjection.h"
 #include "PlayerBullet.h"
+#include <memory>
+#include <list>
+
+using namespace std;
 
 /// <summary>
 /// Ž©ƒLƒƒƒ‰
@@ -52,7 +56,7 @@ private:
 
 	Vector3 pos;
 
-	PlayerBullet* bullet_ = nullptr;
+	list<unique_ptr<PlayerBullet>> bullets_;
 	//‘¬“x
 	//ˆÚ“®—Ê
 	const float moveSpeed = 0.1f;
