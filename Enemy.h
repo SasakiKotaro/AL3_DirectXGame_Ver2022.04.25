@@ -1,0 +1,34 @@
+#pragma once
+#include "ViewProjection.h"
+#include "WorldTransform.h"
+#include "Model.h"
+#include <list>
+
+using namespace std;
+
+/// <summary>
+/// ìG
+/// </summary>
+class Enemy
+{
+public:
+	/// <summary>
+	/// èâä˙âª
+	/// </summary>
+	void Init(Model* model, WorldTransform worldTransform);
+
+	/// <summary>
+	/// çXêV
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// ï`âÊ
+	/// </summary>
+	void Draw(const ViewProjection& viewProjection);
+
+private:
+	WorldTransform worldTransform_;
+	Model* model_ = nullptr;
+	uint32_t textureHandle_ = 0u;
+};

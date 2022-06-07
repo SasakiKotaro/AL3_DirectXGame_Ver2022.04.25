@@ -12,6 +12,9 @@
 #include "DebugCamera.h"
 
 #include "Player.h"
+#include "Enemy.h"
+
+using namespace std;
 
 /// <summary>
 /// ゲームシーン
@@ -75,6 +78,8 @@ private: // メンバ変数
 	Vector4 zColor_ = { 0,0,1,0.5 };
 
 	Player* player_ = nullptr;
+	Enemy* enemy_ = nullptr;
+	unique_ptr<Enemy> enemy_;
 
 	/// <summary>
 	/// ゲームシーン用

@@ -12,8 +12,6 @@
 #define LEFT DIK_LEFT
 #define RIGHT DIK_RIGHT
 
-using namespace std;
-
 float Clamp(float min, float max, float num)
 {
 	if (num <= min)
@@ -34,6 +32,7 @@ GameScene::~GameScene()
 	delete model_;
 	delete debugCamera_;
 	delete player_;
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -48,19 +47,17 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 	player_ = new Player();
+	enemy_ = new Enemy();
 
 	model_ = Model::Create();
 	player_->Init(model_, textureHandle_);
+	enemy_->Init(model_, worldTransform_);
 }
 
 void GameScene::Update()
 {
-
 	player_->Update();
-
-	//debug
-	//debugText_->SetPos(50, 50);
-	//debugText_->Printf("angle:(%f,%f,%f)",);
+	enemy_->Update();
 }
 
 void GameScene::Draw() {
@@ -91,6 +88,11 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+
+	if (enemy_)
+	{
+		enemy_->Draw(viewProjection_);
+	}
 
 	//3Dモデルの描画
 
