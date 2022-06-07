@@ -6,6 +6,12 @@
 
 using namespace std;
 
+enum class Phase
+{
+	Approach,	//Ú‹ß
+	Leave,		//—£’E
+};
+
 /// <summary>
 /// “G
 /// </summary>
@@ -27,8 +33,20 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection);
 
+
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
+
+	Phase phase_ = Phase::Approach;
+	/// <summary>
+	/// Ú‹ßŠÖ”
+	/// </summary>
+	void ApproachP();
+	/// <summary>
+	/// —£’EŠÖ”
+	/// </summary>
+	void LeaveP();
 };
