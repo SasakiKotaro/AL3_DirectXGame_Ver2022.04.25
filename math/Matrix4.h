@@ -131,3 +131,6 @@ public:
 };
 
 Matrix4& operator*(const Matrix4& m1, const Matrix4& m2);
+
+//行列とベクトルの掛け算
+Vector3 multiV3M4(const Matrix4 m, const Vector3 v);

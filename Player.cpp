@@ -26,6 +26,10 @@ void Player::Init(Model* model, uint32_t textureHandle)
 
 void Player::Update()
 {
+	bullets_.remove_if([](unique_ptr<PlayerBullet>& bullet)
+		{
+			return bullet->IsDead();
+		});
 	worldTransform_.Initialize();
 	Move();
 	Attack();
@@ -33,6 +37,14 @@ void Player::Update()
 	{
 		bullet->Update();
 	}
+
+	//debug
+#ifdef DEBUG
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("angle:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
+#endif // DEBUG
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("angle:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
 }
 
 void Player::Move()
@@ -58,7 +70,7 @@ void Player::Move()
 	{
 		worldTransform_.rotation_.y += rotateSpeed;
 	}
-	else if (input_->PushKey(DIK_E))
+	else if (KEY(DIK_E))
 	{
 		worldTransform_.rotation_.y -= rotateSpeed;
 	}
@@ -95,9 +107,14 @@ void Player::Attack()
 {
 	if (TRIGGER(SPACE))
 	{
+		//’e‚Ì‘¬“x
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+		//‘¬“xƒxƒNƒgƒ‹‚ğ©‹@‚ÌŒü‚«‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
+		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
 		//’e‚ğ¶¬•‰Šú‰»
 		unique_ptr<PlayerBullet> newBullet = make_unique<PlayerBullet>();
-		newBullet->Init(model_, worldTransform_);
+		newBullet->Init(model_, worldTransform_.translation_, velocity);
 		//’e‚Ì“o˜^
 		bullets_.push_back(move(newBullet));
 	}

@@ -59,8 +59,8 @@ void GameScene::Update()
 	player_->Update();
 
 	//debug
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("pos:(%f,%f,%f)");
+	//debugText_->SetPos(50, 50);
+	//debugText_->Printf("angle:(%f,%f,%f)",);
 }
 
 void GameScene::Draw() {
