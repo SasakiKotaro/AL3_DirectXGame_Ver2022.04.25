@@ -39,10 +39,7 @@ void Player::Update()
 	}
 
 	//debug
-#ifdef DEBUG
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("angle:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
-#endif // DEBUG
+
 	debugText_->SetPos(50, 50);
 	debugText_->Printf("angle:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
 }

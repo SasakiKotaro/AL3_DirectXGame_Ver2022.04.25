@@ -33,14 +33,16 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection);
 
-
-
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
 
-	Phase phase_ = Phase::Approach;
+	void(Enemy::* pCurrent)();
+
+	static void(Enemy::* pFuncTable[])();
+
+	Phase phase_;
 	/// <summary>
 	/// ê⁄ãﬂä÷êî
 	/// </summary>

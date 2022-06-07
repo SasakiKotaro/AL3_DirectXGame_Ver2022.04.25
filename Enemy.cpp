@@ -11,21 +11,13 @@ void Enemy::Init(Model* model, WorldTransform worldTransform)
 	worldTransform_.Initialize();
 	//引数で受け取った座標をセット
 	worldTransform_.translation_ = worldTransform.translation_;
+	pCurrent = &Enemy::ApproachP;
 }
 
 void Enemy::Update()
 {
-	switch (phase_)
-	{
-	case Phase::Approach:
-		ApproachP();
-		break;
-	case Phase::Leave:
-		LeaveP();
-		break;
-	default:
-		break;
-	}
+	(this->*pCurrent)();
+	(this->*pFuncTable[static_cast<size_t>(phase_)])();
 
 	worldTransform_.Update();
 }
@@ -51,3 +43,9 @@ void Enemy::LeaveP()
 	Vector3 LeaveSpeed(0.5, 0.2, 0);
 	worldTransform_.translation_ -= LeaveSpeed;
 }
+
+void (Enemy::* Enemy::pFuncTable[])() =
+{
+	&Enemy::ApproachP,
+	&Enemy::LeaveP
+};
