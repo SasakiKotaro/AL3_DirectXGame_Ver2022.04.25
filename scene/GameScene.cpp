@@ -32,7 +32,6 @@ GameScene::~GameScene()
 	delete model_;
 	delete debugCamera_;
 	delete player_;
-	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -45,19 +44,25 @@ void GameScene::Initialize() {
 	//ファイル名を指定し、テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
-	viewProjection_.Initialize();
-	player_ = new Player();
-	enemy_ = new Enemy();
-
 	model_ = Model::Create();
+	viewProjection_.Initialize();
+
+	player_ = new Player();
+
+	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
+	newEnemy->Init(model_, worldTransform_);
+	enemys_.push_back(move(newEnemy));
+
 	player_->Init(model_, textureHandle_);
-	enemy_->Init(model_, worldTransform_);
 }
 
 void GameScene::Update()
 {
 	player_->Update();
-	enemy_->Update();
+	for (unique_ptr<Enemy>& enemy : enemys_)
+	{
+		enemy->Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -89,10 +94,11 @@ void GameScene::Draw() {
 
 	player_->Draw(viewProjection_);
 
-	if (enemy_)
+	for (unique_ptr<Enemy>& enemy : enemys_)
 	{
-		enemy_->Draw(viewProjection_);
+		enemy->Draw(viewProjection_);
 	}
+
 
 	//3Dモデルの描画
 

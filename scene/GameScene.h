@@ -10,6 +10,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include <memory>
+#include <list>
 
 #include "Player.h"
 #include "Enemy.h"
@@ -78,8 +80,8 @@ private: // メンバ変数
 	Vector4 zColor_ = { 0,0,1,0.5 };
 
 	Player* player_ = nullptr;
-	Enemy* enemy_ = nullptr;
-	unique_ptr<Enemy> enemy_;
+
+	list<unique_ptr<Enemy>> enemys_;
 
 	/// <summary>
 	/// ゲームシーン用
