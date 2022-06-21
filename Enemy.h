@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "Model.h"
 #include <list>
+#include "EnemyBullet.h"
 
 using namespace std;
 
@@ -33,6 +34,11 @@ public:
 	/// </summary>
 	void Draw(const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// çUåÇ
+	/// </summary>
+	void Fire();
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
@@ -42,7 +48,16 @@ private:
 
 	static void(Enemy::* pFuncTable[])();
 
+	//íe
+	list<unique_ptr<EnemyBullet>> bullets_;
+
 	Phase phase_;
+
+	static const int kFireInterval = 120;
+	int32_t timer = 0;
+
+	void ApproachInit();
+
 	/// <summary>
 	/// ê⁄ãﬂä÷êî
 	/// </summary>

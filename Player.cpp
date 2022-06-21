@@ -79,25 +79,7 @@ void Player::Move()
 	pos.y = max(pos.y, -kMoveLimitY);
 	pos.y = min(pos.y, +kMoveLimitY);
 	worldTransform_.translation_ = pos;
-	//ägèk
-	Matrix4 scaleMat;
-	scaleMat.SetScale(1.0f, 1.0f, 1.0f);
-	//âÒì]
-	Matrix4 rotaMat;
-	rotaMat.SetRotate(
-		TORADIAN(0),
-		worldTransform_.rotation_.y,
-		TORADIAN(0));
-	//ïΩçsà⁄ìÆ
-	Matrix4 transMat = MathUtility::Matrix4Identity();
-	transMat.SetTranslate(
-		worldTransform_.translation_.x,
-		worldTransform_.translation_.y,
-		worldTransform_.translation_.z);
-	//ä|ÇØçáÇÌÇπ
-	worldTransform_.matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
-	//ì]ëó
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void Player::Attack()
