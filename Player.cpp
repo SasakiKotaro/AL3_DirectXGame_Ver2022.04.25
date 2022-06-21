@@ -98,6 +98,17 @@ void Player::Attack()
 		bullets_.push_back(move(newBullet));
 	}
 }
+
+Vector3 Player::GetWorldPosition()
+{
+	Vector3 worldPos;
+	//¬•ª‚ðŽæ“¾
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+	return worldPos;
+}
+
 void Player::Draw(ViewProjection viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);

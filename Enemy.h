@@ -4,6 +4,8 @@
 #include "Model.h"
 #include <list>
 #include "EnemyBullet.h"
+//自クラスの前方宣言
+class Player;
 
 using namespace std;
 
@@ -39,6 +41,9 @@ public:
 	/// </summary>
 	void Fire();
 
+	void SetPlayer(Player* player) { player_ = player; }
+	Vector3 GetWorldPosition();
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
@@ -66,4 +71,8 @@ private:
 	/// 離脱関数
 	/// </summary>
 	void LeaveP();
+
+	//プレイヤー
+	Player* player_ = nullptr;
+
 };

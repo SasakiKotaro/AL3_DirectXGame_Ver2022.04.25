@@ -51,6 +51,7 @@ void GameScene::Initialize() {
 
 	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
 	newEnemy->Init(model_, worldTransform_);
+	newEnemy->SetPlayer(player_);
 	enemys_.push_back(move(newEnemy));
 
 	player_->Init(model_, textureHandle_);

@@ -1,6 +1,6 @@
 #include "Enemy.h"
 #include <assert.h>
-
+#include "Player.h"
 void Enemy::Init(Model* model, WorldTransform worldTransform)
 {
 	assert(model);
@@ -11,7 +11,6 @@ void Enemy::Init(Model* model, WorldTransform worldTransform)
 	worldTransform_.Initialize();
 	//引数で受け取った座標をセット
 	worldTransform_.translation_ = Vector3(10, 0, 50);
-
 	pCurrent = &Enemy::ApproachP;
 	ApproachInit();
 }
@@ -46,8 +45,16 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::Fire()
 {
 	//弾の速度
-	const float kBulletSpeed = 5.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity;
+
+	Vector3 pl = player_->GetWorldPosition();
+	Vector3 en = GetWorldPosition();
+	Vector3 distance = en - pl;
+	distance.norm();
+
+	velocity = distance * kBulletSpeed;
+
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = multiV3M4(worldTransform_.matWorld_, velocity);
 	//弾を生成＆初期化
@@ -57,9 +64,19 @@ void Enemy::Fire()
 	bullets_.push_back(move(newBullet));
 }
 
+Vector3 Enemy::GetWorldPosition()
+{
+	Vector3 worldPos;
+	//成分を取得
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+	return worldPos;
+}
+
 void Enemy::ApproachP()
 {
-	Vector3 ApproachSpeed(0, 0, 0.1);
+	Vector3 ApproachSpeed(0, 0, 0.01);
 	worldTransform_.translation_ -= ApproachSpeed;
 	timer--;
 	if (timer <= 0)
