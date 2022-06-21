@@ -12,6 +12,8 @@ void EnemyBullet::Init(Model* model, const Vector3& position, const Vector3& vel
 	worldTransform_.Initialize();
 	//引数で受け取った座標をセット
 	worldTransform_.translation_ = position;
+	worldTransform_.scale_ = { 0.5,0.5,2 };
+	worldTransform_.Update();
 	//引数で受け取った加速度でセット
 	velocity_ = velocity;
 }

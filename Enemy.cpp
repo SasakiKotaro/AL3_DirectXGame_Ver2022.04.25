@@ -45,7 +45,7 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::Fire()
 {
 	//弾の速度
-	const float kBulletSpeed = 1.0f;
+	const float kBulletSpeed = 0.2f;
 	Vector3 velocity;
 
 	Vector3 pl = player_->GetWorldPosition();
@@ -53,7 +53,11 @@ void Enemy::Fire()
 	Vector3 distance = en - pl;
 	distance.norm();
 
-	velocity = distance * kBulletSpeed;
+	//velocity = distance * kBulletSpeed;
+
+	//float angle = atan2(velocity.y, velocity.z);
+
+	//Vector3 velocityZ;
 
 	//速度ベクトルを自機の向きに合わせて回転させる
 	velocity = multiV3M4(worldTransform_.matWorld_, velocity);

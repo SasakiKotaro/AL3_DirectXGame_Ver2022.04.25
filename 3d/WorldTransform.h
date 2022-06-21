@@ -52,7 +52,7 @@ struct WorldTransform {
 		Initialize();
 		//拡縮
 		Matrix4 scaleMat;
-		scaleMat.SetScale(1.0f, 1.0f, 1.0f);
+		scaleMat.SetScale(scale_.x, scale_.y, scale_.z);
 		//回転
 		Matrix4 rotaMat;
 		rotaMat.SetRotate(
