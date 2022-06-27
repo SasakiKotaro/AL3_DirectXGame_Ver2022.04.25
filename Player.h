@@ -48,6 +48,16 @@ public:
 	/// </summary>
 	Vector3 GetWorldPosition();
 
+	/// <summary>
+	/// 衝突感知
+	/// </summary>
+	void onCollision();
+
+	/// <summary>
+	/// 弾のリスト取得
+	/// </summary>
+	const list<unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; };
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

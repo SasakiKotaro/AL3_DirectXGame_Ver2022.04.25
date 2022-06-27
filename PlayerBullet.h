@@ -26,6 +26,11 @@ public:
 
 	bool IsDead()const { return isDead_; }
 
+	/// <summary>
+	/// è’ìÀÇÃä¥ím
+	/// </summary>
+	void onCollision();
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;

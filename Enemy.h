@@ -44,6 +44,16 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
 
+	/// <summary>
+	/// Õ“Ë‚ÌŠ´’m
+	/// </summary>
+	void onCollision();
+
+	/// <summary>
+	/// ’e‚ÌƒŠƒXƒgæ“¾
+	/// </summary>
+	const list<unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; };
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
