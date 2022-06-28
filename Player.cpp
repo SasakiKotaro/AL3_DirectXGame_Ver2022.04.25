@@ -37,11 +37,6 @@ void Player::Update()
 	{
 		bullet->Update();
 	}
-
-	//debug
-
-	debugText_->SetPos(50, 50);
-	debugText_->Printf("angle:(%f,%f,%f)", worldTransform_.rotation_.x, worldTransform_.rotation_.y, worldTransform_.rotation_.z);
 }
 
 void Player::Move()
@@ -107,6 +102,10 @@ Vector3 Player::GetWorldPosition()
 	worldPos.y = worldTransform_.translation_.y;
 	worldPos.z = worldTransform_.translation_.z;
 	return worldPos;
+}
+
+void Player::onCollision()
+{
 }
 
 void Player::Draw(ViewProjection viewProjection)

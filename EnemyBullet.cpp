@@ -32,3 +32,13 @@ void EnemyBullet::onCollision()
 {
 	isDead_ = true;
 }
+
+Vector3 EnemyBullet::GetWorldPosition()
+{
+	Vector3 worldPos;
+	//¬•ª‚ğæ“¾
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+	return worldPos;
+}

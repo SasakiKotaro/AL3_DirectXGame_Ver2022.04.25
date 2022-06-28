@@ -54,6 +54,9 @@ public:
 	/// </summary>
 	const list<unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; };
 
+	bool IsDead()const { return isDead_; }
+
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
@@ -84,5 +87,7 @@ private:
 
 	//ƒvƒŒƒCƒ„[
 	Player* player_ = nullptr;
+
+	bool isDead_ = false;
 
 };

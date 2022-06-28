@@ -30,6 +30,7 @@ public:
 	/// è’ìÀÇÃä¥ím
 	/// </summary>
 	void onCollision();
+	Vector3 GetWorldPosition();
 
 private:
 	WorldTransform worldTransform_;

@@ -31,6 +31,8 @@ public:
 	/// </summary>
 	void onCollision();
 
+	Vector3 GetWorldPosition();
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;

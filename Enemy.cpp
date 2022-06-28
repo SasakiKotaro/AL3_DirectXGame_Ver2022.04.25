@@ -91,6 +91,11 @@ void Enemy::ApproachP()
 	//}
 }
 
+void Enemy::onCollision()
+{
+	isDead_ = true;
+}
+
 void Enemy::LeaveP()
 {
 	Vector3 LeaveSpeed(0.5, 0.2, 0);

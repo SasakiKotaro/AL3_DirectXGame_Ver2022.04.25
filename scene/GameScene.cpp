@@ -12,6 +12,14 @@
 #define LEFT DIK_LEFT
 #define RIGHT DIK_RIGHT
 
+
+float CollisionCheckCulc(Vector3 a, Vector3 b)
+{
+	return(b.x - a.x) * (b.x - a.x)
+		+ (b.y - a.y) * (b.y - a.y)
+		+ (b.z - a.z) * (b.z - a.z);
+}
+
 float Clamp(float min, float max, float num)
 {
 	if (num <= min)
@@ -49,7 +57,6 @@ void GameScene::Initialize() {
 
 	player_ = new Player();
 
-	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
 	newEnemy->Init(model_, worldTransform_);
 	newEnemy->SetPlayer(player_);
 	enemys_.push_back(move(newEnemy));
@@ -59,11 +66,17 @@ void GameScene::Initialize() {
 
 void GameScene::Update()
 {
+	enemys_.remove_if([](unique_ptr<Enemy>& enemy)
+		{
+			return enemy->IsDead();
+		}
+	);
 	player_->Update();
 	for (unique_ptr<Enemy>& enemy : enemys_)
 	{
 		enemy->Update();
 	}
+	checkAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -124,3 +137,70 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
+void GameScene::checkAllCollisions()
+{
+	Vector3 posA, posB;
+
+#pragma region 自キャラと敵弾の当たり判定
+	posA = player_->GetWorldPosition();
+	//敵弾のリスト生成
+	for (const unique_ptr<Enemy>& enemy : enemys_)
+	{
+		const list<unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+		for (const unique_ptr<EnemyBullet>& bullet : enemyBullets)
+		{
+			posB = bullet->GetWorldPosition();
+
+			if (CollisionCheckCulc(posA, posB) <= 1)
+			{
+				player_->onCollision();
+				bullet->onCollision();
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラの当たり判定
+
+	//自弾のリスト生成
+	const list<unique_ptr<PlayerBullet>>& playerbullets = player_->GetBullets();
+
+	for (const unique_ptr<PlayerBullet>& pBullet : playerbullets)
+	{
+		posA = pBullet->GetWorldPosition();
+		for (const unique_ptr<Enemy>& enemy : enemys_)
+		{
+			posB = enemy->GetWorldPosition();
+			if (CollisionCheckCulc(posA, posB) <= 1)
+			{
+				pBullet->onCollision();
+				enemy->onCollision();
+			}
+		}
+	}
+
+#pragma endregion
+
+#pragma region 自弾と敵弾の当たり判定
+
+	const list<unique_ptr<PlayerBullet>>& playerBullet = player_->GetBullets();
+	for (const unique_ptr<PlayerBullet>& pBullet : playerBullet)
+	{
+		posA = pBullet->GetWorldPosition();
+		for (const unique_ptr<Enemy>& enemy : enemys_)
+		{
+			const list<unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+			for (const unique_ptr<EnemyBullet>& eBullet : enemyBullets)
+			{
+				posB = eBullet->GetWorldPosition();
+
+				if (CollisionCheckCulc(posA, posB) <= 1)
+				{
+					pBullet->onCollision();
+					eBullet->onCollision();
+				}
+			}
+		}
+	}
+}
+#pragma endregion

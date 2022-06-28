@@ -87,6 +87,7 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	list<unique_ptr<Enemy>> enemys_;
+	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
 
 	/// <summary>
 	/// ゲームシーン用
