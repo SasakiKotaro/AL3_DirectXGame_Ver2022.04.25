@@ -71,8 +71,8 @@ private:
 
 	Phase phase_;
 
-	static const int kFireInterval = 120;
-	int32_t timer = 0;
+	static const int kFireInterval = 300;
+	int32_t timer = kFireInterval;
 
 	void ApproachInit();
 
@@ -89,5 +89,4 @@ private:
 	Player* player_ = nullptr;
 
 	bool isDead_ = false;
-
 };

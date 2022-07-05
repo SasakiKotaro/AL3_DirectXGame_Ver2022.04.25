@@ -104,7 +104,7 @@ void Enemy::LeaveP()
 
 void Enemy::ApproachInit()
 {
-	timer = 0;
+	timer = kFireInterval;
 }
 
 void (Enemy::* Enemy::pFuncTable[])() =

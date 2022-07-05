@@ -49,8 +49,6 @@ Vector3 Vector3::cross(const Vector3& v) const
 	return result;
 }
 
-
-
 //Vector3ƒNƒ‰ƒX‚É‘®‚³‚È‚¢ŠÖ”
 const Vector3 operator+(const Vector3& v1, const Vector3& v2)
 {
