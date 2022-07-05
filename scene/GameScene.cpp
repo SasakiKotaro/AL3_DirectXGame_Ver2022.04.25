@@ -46,13 +46,10 @@ GameScene::~GameScene()
 
 void GameScene::Initialize() {
 
-	debugCamera_ = new DebugCamera(1280, 720);
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
-
 
 	//ファイル名を指定し、テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("mario.jpg");
@@ -71,6 +68,16 @@ void GameScene::Initialize() {
 
 	player_->Init(model_, textureHandle_);
 	skyDome_->Init(modelSkydome_, modelTextureHandle_);
+
+	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
+
+	//軸方向の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	//軸方向表示が参照するビュープロジェクションを指定する
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+
+	//ラインが参照するビュープロジェクションを指定する
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 }
 
 void GameScene::Update()
