@@ -124,7 +124,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
+	//model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
 	player_->Draw(viewProjection_);
 	skyDome_->Draw(viewProjection_);
 
@@ -132,8 +132,6 @@ void GameScene::Draw() {
 	{
 		enemy->Draw(viewProjection_);
 	}
-
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
 
 	//3Dモデルの描画
 
