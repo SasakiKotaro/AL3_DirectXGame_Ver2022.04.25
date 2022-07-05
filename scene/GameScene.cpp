@@ -40,28 +40,37 @@ GameScene::~GameScene()
 	delete model_;
 	delete debugCamera_;
 	delete player_;
+	delete modelSkydome_;
+	delete skyDome_;
 }
 
 void GameScene::Initialize() {
+
+	debugCamera_ = new DebugCamera(1280, 720);
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
+
 	//ファイル名を指定し、テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("mario.jpg");
+	modelTextureHandle_ = TextureManager::Load("uvChecker.png");
 
 	model_ = Model::Create();
+	modelSkydome_ = Model::CreateFromOBJ("skydome_text", true);
 	viewProjection_.Initialize();
 
 	player_ = new Player();
+	skyDome_ = new Skydome();
 
 	newEnemy->Init(model_, worldTransform_);
 	newEnemy->SetPlayer(player_);
 	enemys_.push_back(move(newEnemy));
 
 	player_->Init(model_, textureHandle_);
+	skyDome_->Init(modelSkydome_, modelTextureHandle_);
 }
 
 void GameScene::Update()
@@ -72,11 +81,14 @@ void GameScene::Update()
 		}
 	);
 	player_->Update();
+	skyDome_->Update();
 	for (unique_ptr<Enemy>& enemy : enemys_)
 	{
 		enemy->Update();
 	}
 	checkAllCollisions();
+
+	debugCamera_->Update();
 }
 
 void GameScene::Draw() {
@@ -107,12 +119,14 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	skyDome_->Draw(viewProjection_);
 
 	for (unique_ptr<Enemy>& enemy : enemys_)
 	{
 		enemy->Draw(viewProjection_);
 	}
 
+	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
 
 	//3Dモデルの描画
 

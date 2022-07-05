@@ -15,6 +15,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Skydome.h"
 
 using namespace std;
 
@@ -85,6 +86,10 @@ private: // メンバ変数
 	Vector4 zColor_ = { 0,0,1,0.5 };
 
 	Player* player_ = nullptr;
+
+	Skydome* skyDome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
+	uint32_t modelTextureHandle_;
 
 	list<unique_ptr<Enemy>> enemys_;
 	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
