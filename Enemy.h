@@ -2,7 +2,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Model.h"
-#include <list>
+//#include <list>
 #include "EnemyBullet.h"
 //©ƒNƒ‰ƒX‚Ì‘O•ûéŒ¾
 class Player;

@@ -15,9 +15,9 @@ void Skydome::Init(Model* model, uint32_t texture)
 void Skydome::Update()
 {
 	worldTransform_.Initialize();
-	worldTransform_.scale_.x = 100;
-	worldTransform_.scale_.y = 100;
-	worldTransform_.scale_.z = 100;
+	worldTransform_.scale_.x = 1000;
+	worldTransform_.scale_.y = 1000;
+	worldTransform_.scale_.z = 1000;
 	worldTransform_.Update();
 }
 

@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
+#include "RailCamera.h"
 
 using namespace std;
 
@@ -90,6 +91,9 @@ private: // メンバ変数
 	Skydome* skyDome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 	uint32_t modelTextureHandle_;
+
+	RailCamera* railCamera_ = nullptr;
+	WorldTransform camTransform_;
 
 	list<unique_ptr<Enemy>> enemys_;
 	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();

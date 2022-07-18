@@ -67,6 +67,12 @@ struct WorldTransform {
 			translation_.z);
 		//掛け合わせ
 		matWorld_.SetMultiple(scaleMat, rotaMat, transMat);
+
+		if (parent_)
+		{
+			matWorld_ *= parent_->matWorld_;
+		}
+
 		//転送
 		TransferMatrix();
 	};

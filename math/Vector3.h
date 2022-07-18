@@ -26,6 +26,8 @@ public:
 	Vector3& operator*=(float s);
 	Vector3& operator/=(float s);
 
+	Vector3& operator*(const Vector3& v);
+
 	float length()const;
 	Vector3& norm();
 	float dot(const Vector3& v) const;

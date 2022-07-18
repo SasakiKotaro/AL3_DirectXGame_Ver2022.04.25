@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "assert.h"
+#include "MathUtility.h"
 #define KEY(k) (input_->PushKey(k))
 #define TRIGGER(k) (input_->TriggerKey(k))
 #define UP DIK_UP
@@ -20,7 +21,7 @@ void Player::Init(Model* model, uint32_t textureHandle)
 	//シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
-
+	worldTransform_.translation_.z = 50;
 	worldTransform_.Initialize();
 }
 
@@ -30,7 +31,7 @@ void Player::Update()
 		{
 			return bullet->IsDead();
 		});
-	worldTransform_.Initialize();
+
 	Move();
 	Attack();
 	for (unique_ptr<PlayerBullet>& bullet : bullets_)
@@ -73,8 +74,9 @@ void Player::Move()
 	pos.x = min(pos.x, +kMoveLimitX);
 	pos.y = max(pos.y, -kMoveLimitY);
 	pos.y = min(pos.y, +kMoveLimitY);
-	worldTransform_.translation_ = pos;
+	worldTransform_.translation_ += pos;
 	worldTransform_.Update();
+	pos = { 0,0,0 };
 }
 
 void Player::Attack()
@@ -84,11 +86,18 @@ void Player::Attack()
 		//弾の速度
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
-		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
+
 		//弾を生成＆初期化
 		unique_ptr<PlayerBullet> newBullet = make_unique<PlayerBullet>();
-		newBullet->Init(model_, worldTransform_.translation_, velocity);
+		Vector3 worldTransration = 
+			MathUtility::Vector3TransformCoord(worldTransform_.translation_, worldTransform_.matWorld_);
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
+		newBullet->Init(
+			model_,
+			worldTransration,
+			velocity);
+
 		//弾の登録
 		bullets_.push_back(move(newBullet));
 	}

@@ -58,6 +58,11 @@ public:
 	/// </summary>
 	const list<unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; };
 
+	void SetWorldTransform(WorldTransform* worldTransform)
+	{
+		worldTransform_.parent_ = worldTransform;
+	}
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

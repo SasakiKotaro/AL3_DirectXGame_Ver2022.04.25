@@ -38,14 +38,16 @@ GameScene::GameScene() {}
 GameScene::~GameScene()
 {
 	delete model_;
-	delete debugCamera_;
+	//delete debugCamera_;
 	delete player_;
 	delete modelSkydome_;
 	delete skyDome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
 
+	worldTransform_.Initialize();
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -61,6 +63,7 @@ void GameScene::Initialize() {
 
 	player_ = new Player();
 	skyDome_ = new Skydome();
+	railCamera_ = new RailCamera();
 
 	newEnemy->Init(model_, worldTransform_);
 	newEnemy->SetPlayer(player_);
@@ -69,19 +72,33 @@ void GameScene::Initialize() {
 	player_->Init(model_, textureHandle_);
 	skyDome_->Init(modelSkydome_, modelTextureHandle_);
 
+	camTransform_.translation_ = { 0,0,0 };
+	worldTransform_.translation_ = { 0,0,-50 };
+	railCamera_->Init({ 0,0,-50 }, Vector3(0, 0, 0));
+
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
+	player_->SetWorldTransform(railCamera_->GetWorldTransform());
 
 	//軸方向の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
+	//AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示が参照するビュープロジェクションを指定する
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&railCamera_->GetViewProjection());
 
 	//ラインが参照するビュープロジェクションを指定する
-	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+	//PrimitiveDrawer::GetInstance()->SetViewProjection();
 }
 
 void GameScene::Update()
 {
+	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+	viewProjection_.matView = railCamera_->GetViewProjection().matView;
+	viewProjection_.TransferMatrix();
+	railCamera_->Update();
+
+	//viewProjection_ = railCamera_->GetViewProjection();
+	//viewProjection_ = railCamera_->GetViewProjection();
+
 	enemys_.remove_if([](unique_ptr<Enemy>& enemy)
 		{
 			return enemy->IsDead();
@@ -95,7 +112,13 @@ void GameScene::Update()
 	}
 	checkAllCollisions();
 
-	debugCamera_->Update();
+	//debugCamera_->Update();
+
+	debugText_->SetPos(50, 250);
+	Vector3 v = player_->GetWorldPosition();
+	debugText_->Printf("%f,%f,%f", v.x, v.y, v.z);
+
+	//viewProjection_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -124,7 +147,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	//model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	player_->Draw(viewProjection_);
 	skyDome_->Draw(viewProjection_);
 

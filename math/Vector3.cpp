@@ -1,6 +1,15 @@
 #include "Vector3.h"
 #include "math.h"
 
+Vector3& Vector3::operator*(const Vector3& v)
+{
+	Vector3 result;
+	result.x = this->x * v.x;
+	result.y = this->y * v.y;
+	result.z = this->z * v.z;
+	return result;
+}
+
 /// <summary>
 /// ƒxƒNƒgƒ‹‚Ì’·‚³
 /// </summary>
