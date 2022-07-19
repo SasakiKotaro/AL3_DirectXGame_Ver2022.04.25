@@ -14,7 +14,7 @@ void RailCamera::Init(Vector3 pos, Vector3 angle)
 void RailCamera::Update()
 {
 	worldTransform_.translation_.z += 0.2;
-	worldTransform_.rotation_.z += 0.00;
+	worldTransform_.rotation_.z += 0.02;
 	worldTransform_.Update();
 
 	viewProjection_.eye = worldTransform_.translation_;

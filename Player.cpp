@@ -86,10 +86,9 @@ void Player::Attack()
 		//弾の速度
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
-
 		//弾を生成＆初期化
 		unique_ptr<PlayerBullet> newBullet = make_unique<PlayerBullet>();
-		Vector3 worldTransration = 
+		Vector3 worldTransration =
 			MathUtility::Vector3TransformCoord(worldTransform_.translation_, worldTransform_.matWorld_);
 		//速度ベクトルを自機の向きに合わせて回転させる
 		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
