@@ -4,7 +4,7 @@ void RailCamera::Init(Vector3 pos, Vector3 angle)
 {
 	debugText_ = DebugText::GetInstance();
 	worldTransform_.Initialize();
-	viewProjection_.farZ = 100;
+	viewProjection_.farZ = 1000;
 	//worldTransform_.translation_ = translation;
 	worldTransform_.translation_ = pos;
 	worldTransform_.rotation_ = angle;
@@ -13,8 +13,8 @@ void RailCamera::Init(Vector3 pos, Vector3 angle)
 
 void RailCamera::Update()
 {
-	worldTransform_.translation_.z += 0.2;
-	worldTransform_.rotation_.z += 0.02;
+	worldTransform_.translation_.z += 0.0;
+	worldTransform_.rotation_.y += 0.00;
 	worldTransform_.Update();
 
 	viewProjection_.eye = worldTransform_.translation_;
@@ -27,8 +27,8 @@ void RailCamera::Update()
 
 	//debug
 	debugText_->SetPos(50, 150);
-	float x = viewProjection_.eye.x
-		, y = viewProjection_.eye.y
-		, z = viewProjection_.eye.z;
+	float x = viewProjection_.target.x
+		, y = viewProjection_.target.y
+		, z = viewProjection_.target.z;
 	debugText_->Printf("%f,%f,%f", x, y, z);
 }

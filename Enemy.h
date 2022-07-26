@@ -6,6 +6,7 @@
 #include "EnemyBullet.h"
 //©ƒNƒ‰ƒX‚Ì‘O•ûéŒ¾
 class Player;
+class GameScene;
 
 using namespace std;
 
@@ -56,6 +57,7 @@ public:
 
 	bool IsDead()const { return isDead_; }
 
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; };
 
 private:
 	WorldTransform worldTransform_;
@@ -89,4 +91,6 @@ private:
 	Player* player_ = nullptr;
 
 	bool isDead_ = false;
+
+	GameScene* gameScene_ = nullptr;
 };

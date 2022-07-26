@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include <assert.h>
 #include "Player.h"
+#include "GameScene.h"
+
 void Enemy::Init(Model* model, WorldTransform worldTransform)
 {
 	assert(model);
@@ -10,7 +12,7 @@ void Enemy::Init(Model* model, WorldTransform worldTransform)
 	textureHandle_ = TextureManager::Load("black.png");
 	worldTransform_.Initialize();
 	//ˆø”‚ÅŽó‚¯Žæ‚Á‚½À•W‚ðƒZƒbƒg
-	worldTransform_.translation_ = Vector3(10, 0, 50);
+	worldTransform_.translation_ = worldTransform.translation_;
 	pCurrent = &Enemy::ApproachP;
 	ApproachInit();
 }
@@ -20,26 +22,23 @@ void Enemy::Update()
 	(this->*pCurrent)();
 	(this->*pFuncTable[static_cast<size_t>(phase_)])();
 
-	bullets_.remove_if([](unique_ptr<EnemyBullet>& bullet)
-		{
-			return bullet->IsDead();
-		}
-	);
+	//bullets_.remove_if([](unique_ptr<EnemyBullet>& bullet)
+	//	{
+	//		return bullet->IsDead();
+	//	}
+	//);
 
-	for (unique_ptr<EnemyBullet>& bullet : bullets_)
-	{
-		bullet->Update();
-	}
+	//for (unique_ptr<EnemyBullet>& bullet : bullets_)
+	//{
+	//	bullet->Update();
+	//}
 	worldTransform_.Update();
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (unique_ptr<EnemyBullet>& bullet : bullets_)
-	{
-		bullet->Draw(viewProjection);
-	}
+
 }
 
 void Enemy::Fire()
@@ -61,7 +60,8 @@ void Enemy::Fire()
 	unique_ptr<EnemyBullet> newBullet = make_unique<EnemyBullet>();
 	newBullet->Init(model_, worldTransform_.translation_, velocity);
 	//’e‚Ì“o˜^
-	bullets_.push_back(move(newBullet));
+	//bullets_.push_back(move(newBullet));
+	gameScene_->AddEnemyBullet(move(newBullet));
 }
 
 Vector3 Enemy::GetWorldPosition()

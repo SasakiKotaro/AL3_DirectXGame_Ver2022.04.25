@@ -18,6 +18,8 @@
 #include "Skydome.h"
 #include "RailCamera.h"
 
+#include <sstream>
+
 using namespace std;
 
 /// <summary>
@@ -56,6 +58,27 @@ public: // メンバ関数
 	/// </summary>
 	void checkAllCollisions();
 
+	void EnemyFire();
+
+	void BulletUpdate();
+
+	void AddEnemyBullet(unique_ptr<EnemyBullet> enemyBullet)
+	{
+		enemyBullets_.push_back(move(enemyBullet));
+	}
+
+	stringstream enemyPopComands;
+
+	void PopEnemy(Vector3 v);
+
+	/// <summary>
+	/// 敵発生データ
+	/// </summary>
+	void LoadEnemyPopData();
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopComands();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -96,7 +119,14 @@ private: // メンバ変数
 	WorldTransform camTransform_;
 
 	list<unique_ptr<Enemy>> enemys_;
-	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
+
+
+	//弾
+	list<unique_ptr<EnemyBullet>> enemyBullets_;
+
+
+	bool isWait = false;
+	int32_t waitTimer = 0;
 
 	/// <summary>
 	/// ゲームシーン用

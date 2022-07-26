@@ -20,7 +20,10 @@ void EnemyBullet::Update()
 {
 	worldTransform_.translation_ -= velocity_;
 	worldTransform_.Update();
-	if (--deathTimer_ <= 0) { isDead_ = true; }
+	if (--deathTimer_ <= 0)
+	{
+		isDead_ = true;
+	}
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection)

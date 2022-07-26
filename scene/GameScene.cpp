@@ -4,6 +4,7 @@
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include <random>
+#include <fstream>
 
 #define PI 3.141592
 #define TORADIAN(r) (r*PI/180)
@@ -11,6 +12,7 @@
 #define DOWN DIK_DOWN
 #define LEFT DIK_LEFT
 #define RIGHT DIK_RIGHT
+
 
 
 float CollisionCheckCulc(Vector3 a, Vector3 b)
@@ -65,10 +67,6 @@ void GameScene::Initialize() {
 	skyDome_ = new Skydome();
 	railCamera_ = new RailCamera();
 
-	newEnemy->Init(model_, worldTransform_);
-	newEnemy->SetPlayer(player_);
-	enemys_.push_back(move(newEnemy));
-
 	player_->Init(model_, textureHandle_);
 	skyDome_->Init(modelSkydome_, modelTextureHandle_);
 
@@ -87,10 +85,13 @@ void GameScene::Initialize() {
 
 	//ラインが参照するビュープロジェクションを指定する
 	//PrimitiveDrawer::GetInstance()->SetViewProjection();
+
+	LoadEnemyPopData();
 }
 
 void GameScene::Update()
 {
+	UpdateEnemyPopComands();
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
 	viewProjection_.TransferMatrix();
@@ -104,11 +105,20 @@ void GameScene::Update()
 			return enemy->IsDead();
 		}
 	);
+	enemyBullets_.remove_if([](unique_ptr<EnemyBullet>& bullet)
+		{
+			return bullet->IsDead();
+		}
+	);
 	player_->Update();
 	skyDome_->Update();
 	for (unique_ptr<Enemy>& enemy : enemys_)
 	{
 		enemy->Update();
+	}
+	for (unique_ptr<EnemyBullet>& enemyBullet : enemyBullets_)
+	{
+		enemyBullet->Update();
 	}
 	checkAllCollisions();
 
@@ -155,7 +165,10 @@ void GameScene::Draw() {
 	{
 		enemy->Draw(viewProjection_);
 	}
-
+	for (unique_ptr<EnemyBullet>& bullet : enemyBullets_)
+	{
+		bullet->Draw(viewProjection_);
+	}
 	//3Dモデルの描画
 
 	// 3Dオブジェクト描画後処理
@@ -188,7 +201,7 @@ void GameScene::checkAllCollisions()
 	//敵弾のリスト生成
 	for (const unique_ptr<Enemy>& enemy : enemys_)
 	{
-		const list<unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+		const list<unique_ptr<EnemyBullet>>& enemyBullets = enemyBullets_;
 		for (const unique_ptr<EnemyBullet>& bullet : enemyBullets)
 		{
 			posB = bullet->GetWorldPosition();
@@ -231,7 +244,7 @@ void GameScene::checkAllCollisions()
 		posA = pBullet->GetWorldPosition();
 		for (const unique_ptr<Enemy>& enemy : enemys_)
 		{
-			const list<unique_ptr<EnemyBullet>>& enemyBullets = enemy->GetBullets();
+			const list<unique_ptr<EnemyBullet>>& enemyBullets = enemyBullets_;
 			for (const unique_ptr<EnemyBullet>& eBullet : enemyBullets)
 			{
 				posB = eBullet->GetWorldPosition();
@@ -245,4 +258,119 @@ void GameScene::checkAllCollisions()
 		}
 	}
 }
+//void GameScene::AddEnemyBullet(unique_ptr<EnemyBullet>enemyBullet)
+//{
+//	enemyBullets_.push_back(move(enemyBullet));
+//}
 #pragma endregion
+
+void GameScene::EnemyFire()
+{
+	//弾の速度
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity;
+
+	Vector3 pl = player_->GetWorldPosition();
+	for (const unique_ptr<Enemy>& enemy : enemys_)
+	{
+		Vector3 en = enemy->GetWorldPosition();
+		Vector3 distance = en - pl;
+		distance.norm();
+		velocity = distance * kBulletSpeed;
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
+		//弾を生成＆初期化
+		unique_ptr<EnemyBullet> newBullet = make_unique<EnemyBullet>();
+		newBullet->Init(model_, worldTransform_.translation_, velocity);
+		//弾の登録
+		enemyBullets_.push_back(move(newBullet));
+	}
+}
+
+void GameScene::BulletUpdate()
+{
+	enemyBullets_.remove_if([](unique_ptr<EnemyBullet>& bullet)
+		{
+			return bullet->IsDead();
+		}
+	);
+
+	for (unique_ptr<EnemyBullet>& bullet : enemyBullets_)
+	{
+		bullet->Update();
+	}
+}
+
+void GameScene::PopEnemy(Vector3 v)
+{
+	worldTransform_.translation_.x = v.x;
+	worldTransform_.translation_.y = v.y;
+	worldTransform_.translation_.z = v.z;
+
+	unique_ptr<Enemy> newEnemy = make_unique<Enemy>();
+	newEnemy->Init(model_, worldTransform_);
+	newEnemy->SetPlayer(player_);
+	newEnemy->SetGameScene(this);
+	enemys_.push_back(move(newEnemy));
+}
+
+void GameScene::LoadEnemyPopData()
+{
+	ifstream file;
+	file.open("Resources/PopSheet.csv");
+	assert(file.is_open());
+
+	enemyPopComands << file.rdbuf();
+
+	file.close();
+}
+
+void GameScene::UpdateEnemyPopComands()
+{
+	if (isWait)
+	{
+		waitTimer--;
+		if (waitTimer <= 0)
+		{
+			isWait = false;
+		}
+		return;
+	}
+	string line;
+
+	while (getline(enemyPopComands, line))
+	{
+		istringstream line_stream(line);
+		string word;
+
+		getline(line_stream, word, ',');
+
+		//コメントの場合
+		if (word.find("//") == 0)
+		{
+			continue;
+		}
+		if (word.find("POP") == 0)
+		{
+			getline(line_stream, word, ',');
+			float x = (float)atof(word.c_str());
+
+			getline(line_stream, word, ',');
+			float y = (float)atof(word.c_str());
+
+			getline(line_stream, word, ',');
+			float z = (float)atof(word.c_str());
+			PopEnemy(Vector3(x, y, z));
+		}
+		else if (word.find("WAIT") == 0)
+		{
+			getline(line_stream, word, ',');
+			int32_t waitTime = atoi(word.c_str());
+
+			isWait = true;
+			waitTimer = waitTime;
+
+			break;
+		}
+	}
+}

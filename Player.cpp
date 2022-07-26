@@ -34,6 +34,7 @@ void Player::Update()
 
 	Move();
 	Attack();
+
 	for (unique_ptr<PlayerBullet>& bullet : bullets_)
 	{
 		bullet->Update();
@@ -88,15 +89,14 @@ void Player::Attack()
 		Vector3 velocity(0, 0, kBulletSpeed);
 		//’e‚ğ¶¬•‰Šú‰»
 		unique_ptr<PlayerBullet> newBullet = make_unique<PlayerBullet>();
-		Vector3 worldTransration =
-			MathUtility::Vector3TransformCoord(worldTransform_.translation_, worldTransform_.matWorld_);
 		//‘¬“xƒxƒNƒgƒ‹‚ğ©‹@‚ÌŒü‚«‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
 		velocity = multiV3M4(worldTransform_.matWorld_, velocity);
+		Vector3 worldTransration = GetWorldPosition();
+		//	MathUtility::Vector3TransformCoord(worldTransform_.translation_, worldTransform_.matWorld_);
 		newBullet->Init(
 			model_,
 			worldTransration,
 			velocity);
-
 		//’e‚Ì“o˜^
 		bullets_.push_back(move(newBullet));
 	}
@@ -106,9 +106,9 @@ Vector3 Player::GetWorldPosition()
 {
 	Vector3 worldPos;
 	//¬•ª‚ğæ“¾
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
 }
 
