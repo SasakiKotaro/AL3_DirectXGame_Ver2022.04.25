@@ -53,7 +53,7 @@ public:
 	/// <summary>
 	/// ’e‚ÌƒŠƒXƒgæ“¾
 	/// </summary>
-	const list<unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; };
+	//const list<unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; };
 
 	bool IsDead()const { return isDead_; }
 
@@ -69,7 +69,7 @@ private:
 	static void(Enemy::* pFuncTable[])();
 
 	//’e
-	list<unique_ptr<EnemyBullet>> bullets_;
+	//list<unique_ptr<EnemyBullet>> bullets_;
 
 	Phase phase_;
 
